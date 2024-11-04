@@ -217,7 +217,7 @@ GameObject:
   - component: {fileID: 1266793756}
   - component: {fileID: 1266793755}
   m_Layer: 0
-  m_Name: Map Importer
+  m_Name: Map Creator
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -235,6 +235,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d16f59981d02c464492441945104b02d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  NodePrefab: {fileID: 2494380901645981184, guid: a2c5c30d6e5aa6c43ac38c6b5cff499c, type: 3}
 --- !u!4 &1266793756
 Transform:
   m_ObjectHideFlags: 0
