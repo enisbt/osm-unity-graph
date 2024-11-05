@@ -35,10 +35,12 @@ public class OSMParser
     private Dictionary<string, Node> allNodes = new Dictionary<string, Node>();
     private HashSet<string> referencedNodeIds = new HashSet<string>();
     private Vector2 referencePoint = Vector2.zero;
+    private float scaleFactor = 5000f;
     private bool referencePointSet = false;
 
-    public void LoadOSM(string filePath)
+    public void LoadOSM(string filePath, float scaleFactor)
     {
+        this.scaleFactor = scaleFactor;
         if (!File.Exists(filePath))
         {
             Debug.LogError("File not found");
@@ -61,7 +63,6 @@ public class OSMParser
             float normalizedLat = (float)(lat - referencePoint.y);
             float normalizedLon = (float)(lon - referencePoint.x);
 
-            float scaleFactor = 5000f; // Move this to map importer
 
             Vector2 position = new Vector2(normalizedLon, normalizedLat) / scaleFactor;
             allNodes[id] = new Node(id, position);

@@ -8,7 +8,7 @@ public class MapImporter : MonoBehaviour
     private void Start()
     {
         OsmParser = new OSMParser();
-        OsmParser.LoadOSM("D:\\Games\\osm-unity-graph\\Assets\\Data\\map.osm");
+        OsmParser.LoadOSM("D:\\Games\\osm-unity-graph\\Assets\\Data\\map.osm", 5000f);
 
         foreach (var node in OsmParser.nodes.Values)
         {
