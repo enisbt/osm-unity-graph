@@ -63,7 +63,6 @@ public class OSMParser
             float normalizedLat = (float)(lat - referencePoint.y);
             float normalizedLon = (float)(lon - referencePoint.x);
 
-
             Vector2 position = new Vector2(normalizedLon, normalizedLat) / scaleFactor;
             allNodes[id] = new Node(id, position);
         }

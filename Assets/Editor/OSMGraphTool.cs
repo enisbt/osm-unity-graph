@@ -17,7 +17,6 @@ public class OSMGraphTool : EditorWindow
 
     private void OnGUI()
     {
-        GUILayout.Label("OSM File Importer", EditorStyles.boldLabel);
         GUILayout.Label("OSM File Path:");
         EditorGUILayout.BeginHorizontal();
         filePath = EditorGUILayout.TextField(filePath);
