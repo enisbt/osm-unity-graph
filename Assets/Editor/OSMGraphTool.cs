@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.IO;
 using UnityEditor;
 using UnityEngine;
@@ -50,6 +51,7 @@ public class OSMGraphTool : EditorWindow
     private void GenerateMap()
     {
         GameObject parent = new GameObject("Graph");
+        parent.AddComponent<Graph>();
         parent.transform.position = Vector3.zero;
         if (osmParser == null)
         {
@@ -57,13 +59,26 @@ public class OSMGraphTool : EditorWindow
         }
 
         osmParser.LoadOSM(filePath, scale);
+        parent.GetComponent<Graph>().UpdateNodesAndWays(osmParser.nodes, osmParser.ways);
 
-        foreach (var node in osmParser.nodes.Values)
+        if (nodePrefab != null)
         {
-            Vector2 position = node.position;
-            GameObject nodeObject = Instantiate(nodePrefab, position, Quaternion.identity, parent.transform);
-            nodeObject.name = $"Node_{node.id}";
+            foreach (var node in osmParser.nodes.Values)
+            {
+                Vector2 position = node.position;
+                GameObject nodeObject = Instantiate(nodePrefab, position, Quaternion.identity, parent.transform);
+                nodeObject.name = $"Node_{node.id}";
+            }
         }
+
+        GameObject lineMeshObject = new GameObject("LineMesh");
+        lineMeshObject.transform.SetParent(parent.transform);
+        MeshFilter meshFilter = lineMeshObject.AddComponent<MeshFilter>();
+        MeshRenderer meshRenderer = lineMeshObject.AddComponent<MeshRenderer>();
+        meshRenderer.material = new Material(Shader.Find("Sprites/Default")) { color = Color.magenta };
+        Mesh mesh = new Mesh();
+        List<Vector3> vertices = new List<Vector3>();
+        List<int> indices = new List<int>();
 
         foreach (var way in osmParser.ways)
         {
@@ -72,10 +87,23 @@ public class OSMGraphTool : EditorWindow
                 if (osmParser.nodes.TryGetValue(way.nodeRefs[i], out var startNode) &&
                     osmParser.nodes.TryGetValue(way.nodeRefs[i + 1], out var endNode))
                 {
-                    CreateEdge(startNode.position, endNode.position, parent);
+                    Vector3 startPosition = new Vector3(startNode.position.x, startNode.position.y, 0) / scale;
+                    Vector3 endPosition = new Vector3(endNode.position.x, endNode.position.y, 0) / scale;
+
+                    int startIndex = vertices.Count;
+                    vertices.Add(startPosition);
+                    vertices.Add(endPosition);
+
+                    indices.Add(startIndex);
+                    indices.Add(startIndex + 1);
                 }
             }
         }
+
+        mesh.SetVertices(vertices);
+        mesh.SetIndices(indices.ToArray(), MeshTopology.Lines, 0);
+        mesh.RecalculateBounds();
+        meshFilter.mesh = mesh;
     }
 
     private void CreateEdge(Vector2 start, Vector2 end, GameObject parent)

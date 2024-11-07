@@ -8,6 +8,7 @@ public class Node
 {
     public string id { get; set; }
     public Vector2 position { get; set; }
+    public List<Node> Neighbors { get; set; } = new List<Node>();
 
     public Node(string id, Vector2 position)
     {
@@ -91,6 +92,19 @@ public class OSMParser
             if (allNodes.TryGetValue(nodeId, out var node))
             {
                 nodes[nodeId] = node;
+            }
+        }
+
+        foreach (var way in ways)
+        {
+            for (int i = 0; i < way.nodeRefs.Count - 1; i++)
+            {
+                if (nodes.TryGetValue(way.nodeRefs[i], out var startNode) &&
+                    nodes.TryGetValue(way.nodeRefs[i + 1], out var endNode))
+                {
+                    startNode.Neighbors.Add(endNode);
+                    endNode.Neighbors.Add(startNode);
+                }
             }
         }
     }
